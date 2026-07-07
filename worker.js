@@ -50,4 +50,28 @@ export default {
       let body;
       try {
         body = await request.text();
-        JSON.parse(body);
+        JSON.parse(body); // Valida que los datos del sorteo estén bien estructurados
+      } catch (e) {
+        return new Response(JSON.stringify({ error: 'invalid json' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+        });
+      }
+      
+      if (!env || !env.SORTEO_KV) {
+        return new Response(JSON.stringify({ error: 'Falta conectar la base de datos SORTEO_KV en Cloudflare.' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+        });
+      }
+
+      await env.SORTEO_KV.put('state', body);
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+      });
+    }
+
+    // 4. Si entran a cualquier otra ruta que no sea /state
+    return new Response('Not found', { status: 404, headers: CORS_HEADERS });
+  }
+};
