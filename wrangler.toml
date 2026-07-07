@@ -5,10 +5,10 @@ compatibility_date = "2026-07-01"
 # Se crea al hacer "npx wrangler kv namespace create SORTEO_KV"
 # y luego pegas aquí el id que te entregue.
 kv_namespaces = [
-  { binding = "SORTEO_KV", id = "REEMPLAZA_CON_TU_KV_ID" }
+  { binding = "SORTEO_KV", id = "7041b2d5301647a1bf0abb1f08c262d0" }
 ]
 
 [vars]
 # Cámbialo por una palabra secreta única para tu familia.
 # Debe coincidir EXACTO con ADMIN_TOKEN en index.html
-ADMIN_TOKEN = "cambia-este-secreto-2026"
+ADMIN_TOKEN = "Mundial2026"
