@@ -323,16 +323,14 @@ const TEAMS = {
   ESP:{name:'España', flag:'🇪🇸', color:'#AA151B'},
   BEL:{name:'Bélgica', flag:'🇧🇪', color:'#ED2939'}
 };
-// ======= CONFIGURA ESTO =======
-// Como la página y la API viven en el MISMO Worker, se deja vacío
-// (usa ruta relativa /state — no necesitas saber tu URL de antemano).
+
+// ======= CORRECCIÓN CLAVE =======
 const WORKER_URL = '';
-// Debe coincidir EXACTO con ADMIN_TOKEN en wrangler.toml
-const ADMIN_TOKEN = 'cambia-este-secreto-2026';
+const ADMIN_TOKEN = 'Mundial2026'; // Token unificado para enviar al servidor
+const ADMIN_PIN = 'Mundial2026';   // PIN unificado para abrir el Modo Admin en pantalla
 // ================================
 
 const PEOPLE = ['Mony','Iker/Mateo','Uri','Zuria','Coty','Bobis','Alma','Clara'];
-const ADMIN_PIN = '2026';
 
 let state = {
   suiColWinner: null,      // 'SUI' | 'COL' | null
@@ -395,7 +393,7 @@ function setConnStatus(ok){
   el.style.color = ok ? '#3FA66E' : '#E8503A';
 }
 
-// Sondeo en vivo: cada 4s revisa si hay cambios (solo si no estamos a mitad de una edición)
+// Sondeo en vivo cada 4s
 setInterval(()=>{
   if(document.hidden) return;
   fetch(WORKER_URL + '/state', { cache:'no-store' })
@@ -418,6 +416,7 @@ function ownerOf(teamId){
   return null;
 }
 
+// Resto de lógica de renderizado intacta
 function teamDisplayName(teamId){
   if(!teamId) return 'Por definir';
   if(teamId==='SUICOL'){
@@ -568,7 +567,6 @@ function applyAdminVisibility(){
   document.querySelectorAll('.mark-winner-row').forEach(el=> el.style.display = adminMode ? 'flex':'none');
 }
 
-// ---- Draw animation ----
 async function runDraw(){
   const teamIds = Object.keys(TEAMS);
   const shuffledTeams = [...teamIds].sort(()=>Math.random()-0.5);
@@ -600,7 +598,6 @@ function launchConfetti(){
   }
 }
 
-// ---- Event wiring ----
 document.addEventListener('click', async (e)=>{
   const winBtn = e.target.closest('[data-win]');
   if(winBtn && adminMode){
