@@ -39,7 +39,8 @@ export default {
     if (url.pathname === '/state' && request.method === 'POST') {
       const token = request.headers.get('X-Admin-Token');
       
-      if (!env.ADMIN_TOKEN || token !== env.ADMIN_TOKEN) {
+      // El método .trim() elimina espacios o enters fantasmas al inicio y al final
+      if (!env.ADMIN_TOKEN || token?.trim() !== env.ADMIN_TOKEN.trim()) {
         return new Response(JSON.stringify({ error: 'unauthorized', detalle: !env.ADMIN_TOKEN ? 'Falta ADMIN_TOKEN en producción' : 'Token incorrecto' }), {
           status: 401,
           headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
