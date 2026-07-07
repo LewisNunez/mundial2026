@@ -1,30 +1,29 @@
 // Cloudflare Worker — backend del Sorteo Familiar Mundial 2026
+// Guarda y entrega el estado del sorteo usando Workers KV.
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token'
 };
 
+// Definimos el PIN idéntico al que tú usas en la página web
+const PIN_SECRETO = "Mundial2026";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // 1. Manejo de peticiones de seguridad del navegador (CORS)
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
-    // Validar que el entorno exista para evitar el error "undefined"
-    if (!env) {
-      return new Response(JSON.stringify({ error: 'El entorno (env) no está inicializado.' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
-      });
-    }
-
+    // 2. RUTA: GET /state (Para cargar el avance del sorteo en la pantalla)
     if (url.pathname === '/state' && request.method === 'GET') {
-      // Validación segura de SORTEO_KV
-      if (!env.SORTEO_KV) {
-        return new Response(JSON.stringify({ error: 'Falta el binding de SORTEO_KV en Cloudflare' }), {
+      // Verificación de seguridad por si las dudas
+      if (!env || !env.SORTEO_KV) {
+        return new Response(JSON.stringify({ error: 'Falta conectar la base de datos SORTEO_KV en Cloudflare.' }), {
           status: 500,
           headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
         });
@@ -36,12 +35,13 @@ export default {
       });
     }
 
+    // 3. RUTA: POST /state (Para cuando guardas datos con tu PIN)
     if (url.pathname === '/state' && request.method === 'POST') {
       const token = request.headers.get('X-Admin-Token');
       
-      // El método .trim() elimina espacios o enters fantasmas al inicio y al final
-      if (!env.ADMIN_TOKEN || token?.trim() !== env.ADMIN_TOKEN.trim()) {
-        return new Response(JSON.stringify({ error: 'unauthorized', detalle: !env.ADMIN_TOKEN ? 'Falta ADMIN_TOKEN en producción' : 'Token incorrecto' }), {
+      // Comparamos el PIN de la web eliminando espacios en blanco por si se coló alguno (.trim())
+      if (!token || token.trim() !== PIN_SECRETO) {
+        return new Response(JSON.stringify({ error: 'unauthorized', detalle: 'El PIN ingresado no coincide' }), {
           status: 401,
           headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
         });
@@ -50,20 +50,4 @@ export default {
       let body;
       try {
         body = await request.text();
-        JSON.parse(body); 
-      } catch (e) {
-        return new Response(JSON.stringify({ error: 'invalid json' }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
-        });
-      }
-      
-      await env.SORTEO_KV.put('state', body);
-      return new Response(JSON.stringify({ ok: true }), {
-        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
-      });
-    }
-
-    return new Response('Not found', { status: 404, headers: CORS_HEADERS });
-  }
-};
+        JSON.parse(body);
