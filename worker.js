@@ -7,19 +7,32 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token'
 };
 
-// TU PIN SECRETO
 const PIN_SECRETO = "Mundial2026";
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // 1. Manejo de peticiones de seguridad del navegador (CORS)
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
-    // 2. RUTA: GET /state (Cargar el sorteo - Libre para toda la familia)
+    // ---- RUTA TEMPORAL DE DIAGNÓSTICO: /debug ----
+    // Bórrala cuando ya funcione todo, es solo para ver qué ve el Worker.
+    if (url.pathname === '/debug') {
+      const info = {
+        envExiste: !!env,
+        clavesEnEnv: env ? Object.keys(env) : [],
+        tipoDeSORTEO_KV: env ? typeof env.SORTEO_KV : 'sin env',
+        SORTEO_KV_existe: !!(env && env.SORTEO_KV),
+        ADMIN_TOKEN_existe: !!(env && env.ADMIN_TOKEN),
+        ADMIN_TOKEN_valor: env ? env.ADMIN_TOKEN : null
+      };
+      return new Response(JSON.stringify(info, null, 2), {
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+      });
+    }
+
     if (url.pathname === '/state' && request.method === 'GET') {
       if (!env || !env.SORTEO_KV) {
         return new Response(JSON.stringify({ error: 'Falta conectar SORTEO_KV' }), {
@@ -33,34 +46,29 @@ export default {
       });
     }
 
-    // 3. RUTA: POST /state (Guardar sorteo - ¡SÓLO TÚ CON TU PIN!)
     if (url.pathname === '/state' && request.method === 'POST') {
-      
-      // Intentamos leer el PIN de dos formas distintas para asegurar que lo reciba
       const tokenDesdeHeader = request.headers.get('X-Admin-Token');
       const tokenDesdeUrl = url.searchParams.get('token') || url.searchParams.get('pin');
-      
       const pinRecibido = tokenDesdeHeader || tokenDesdeUrl;
 
-      // Validación estricta del PIN
       if (!pinRecibido || pinRecibido.trim() !== PIN_SECRETO) {
         return new Response(JSON.stringify({ error: 'unauthorized', detalle: 'PIN incorrecto en el servidor' }), {
           status: 401,
           headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
         });
       }
-      
+
       let body;
       try {
         body = await request.text();
-        JSON.parse(body); 
+        JSON.parse(body);
       } catch (e) {
         return new Response(JSON.stringify({ error: 'invalid json' }), {
           status: 400,
           headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
         });
       }
-      
+
       if (!env || !env.SORTEO_KV) {
         return new Response(JSON.stringify({ error: 'Falta conectar SORTEO_KV' }), {
           status: 500,
