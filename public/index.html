@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B3D2E">
 <title>Sorteo Familiar · Mundial 2026</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
@@ -261,6 +263,52 @@ body{
 
 .confetti{position:fixed;top:-20px;width:8px;height:14px;opacity:.9;z-index:5;animation:fall linear forwards;}
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:0;}}
+
+/* ---------- AJUSTES MÓVIL ---------- */
+@media (max-width: 600px){
+  body{ padding:16px 10px 60px; }
+  .hero-image{ height:150px; }
+  .hero-content{ padding:20px 18px 22px; }
+  .eyebrow{ font-size:9.5px; letter-spacing:.22em; }
+  .hero p.sub{ font-size:13.5px; }
+  .section{ padding:18px 16px 22px; border-radius:14px; }
+  .section-title{ font-size:19px; flex-wrap:wrap; }
+
+  /* Barra de admin: apilada y con botones de ancho completo, más fáciles de tocar */
+  .admin-bar{
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+  }
+  .admin-bar > *{ text-align:center; }
+  .admin-bar .btn{ width:100%; padding:11px 14px; font-size:13px; }
+  #connStatus{ order:-1; margin-bottom:2px; }
+
+  /* Más espacio para tocar botones sin fallar */
+  .btn{ min-height:40px; }
+  .btn-small{ padding:9px 12px; font-size:12.5px; }
+  .admin-inline{ flex-direction:column; }
+  .admin-inline .btn{ width:100%; }
+  .mark-winner-row{ flex-direction:column; }
+
+  .match-status{ flex-direction:column; align-items:stretch; text-align:left; }
+  .match-meta{ text-align:left; }
+  .match-teams{ font-size:17px; }
+
+  .people-grid{ grid-template-columns:repeat(2, 1fr); }
+
+  .draw-big-btn{ width:100%; font-size:18px; padding:15px 20px; }
+
+  .tickets-grid{ grid-template-columns:1fr; }
+  .bracket-round{ grid-template-columns:1fr; }
+
+  .champion-banner{ padding:26px 16px; }
+}
+
+@media (max-width: 360px){
+  .people-grid{ grid-template-columns:1fr 1fr; gap:8px; }
+  .hero h1{ font-size:26px; }
+}
 </style>
 </head>
 <body>
