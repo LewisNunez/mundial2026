@@ -332,7 +332,7 @@ body{
   </div>
 
   <!-- ESTADO DEL ÚLTIMO CRUCE -->
-  <div class="section">
+  <div class="section" id="suiColSection">
     <h3 class="section-title">Último cupo a definir <span class="tag">OCTAVOS</span></h3>
     <p class="section-desc">El sorteo se habilita en cuanto termine Suiza 🇨🇭 vs Colombia 🇨🇴. Actualiza aquí el resultado cuando el partido finalice.</p>
     <div class="match-status">
@@ -516,6 +516,9 @@ function renderPeople(){
 }
 
 function renderSuiCol(){
+  const section = document.getElementById('suiColSection');
+  if(section) section.style.display = state.drawDone ? 'none' : 'block';
+
   const pill = document.getElementById('suiColPill');
   if(state.suiColWinner){
     pill.textContent = 'DEFINIDO: ' + (state.suiColWinner==='SUI'?'Suiza 🇨🇭':'Colombia 🇨🇴');
