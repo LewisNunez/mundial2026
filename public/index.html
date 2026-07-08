@@ -324,16 +324,18 @@ const TEAMS = {
   BEL:{name:'Bélgica', flag:'🇧🇪', color:'#ED2939'}
 };
 
-// ======= CORRECCIÓN CLAVE =======
-const WORKER_URL = 'sorteo-mundial-worker.luisnunez-cm.workers.dev';
-const ADMIN_TOKEN = 'Mundial2026'; // Token unificado para enviar al servidor
-const ADMIN_PIN = 'Mundial2026';   // PIN unificado para abrir el Modo Admin en pantalla
+// ======= CONFIGURACIÓN =======
+// La página y la API viven en el MISMO Worker (mundial2026...workers.dev),
+// así que se deja vacío para usar ruta relativa al mismo origen.
+const WORKER_URL = '';
+const ADMIN_TOKEN = 'Mundial2026'; // debe coincidir EXACTO con ADMIN_TOKEN en wrangler.toml
+const ADMIN_PIN = 'Mundial2026';   // PIN para abrir el Modo Admin en pantalla
 // ================================
 
 const PEOPLE = ['Mony','Iker/Mateo','Uri','Zuria','Coty','Bobis','Alma','Clara'];
 
 let state = {
-  suiColWinner: null,      // 'SUI' | 'COL' | null
+  suiColWinner: 'SUI',     // Ya definido: Suiza avanzó
   drawDone: false,
   assignment: {},          // { personName: teamId }
   matches: {
@@ -658,7 +660,7 @@ document.getElementById('adminToggleBtn').addEventListener('click', ()=>{
 document.getElementById('resetBtn').addEventListener('click', async ()=>{
   if(!confirm('¿Seguro que quieres reiniciar TODO el sorteo y el cuadro? Esta acción no se puede deshacer.')) return;
   state = {
-    suiColWinner: null,
+    suiColWinner: 'SUI',
     drawDone: false,
     assignment: {},
     matches: {
@@ -679,4 +681,3 @@ loadState();
 </script>
 </body>
 </html>
-
