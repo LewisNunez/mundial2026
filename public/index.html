@@ -213,6 +213,7 @@ body{
 .ticket-no{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-soft);}
 .ticket-bottom{padding:14px 16px 16px;display:flex;align-items:center;gap:10px;}
 .ticket-flag{font-size:30px;line-height:1;}
+.flag-svg{width:1.2em;height:0.85em;display:inline-block;vertical-align:-0.12em;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,0.08);}
 .ticket-team{font-family:'Anton',sans-serif;font-size:16px;color:var(--ink);}
 .ticket-stripe{height:6px;width:100%;}
 
@@ -388,7 +389,7 @@ const TEAMS = {
   NOR:{name:'Noruega', flag:'🇳🇴', color:'#EF2B2D'},
   ARG:{name:'Argentina', flag:'🇦🇷', color:'#75AADB'},
   SUICOL:{name:'Suiza / Colombia', flag:'🇨🇭🇨🇴', color:'#FFCC00'},
-  ENG:{name:'Inglaterra', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#CE1124'},
+  ENG:{name:'Inglaterra', flag:'<svg class="flag-svg" viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="36" fill="#fff"/><rect x="24" width="12" height="36" fill="#CE1124"/><rect y="12" width="60" height="12" fill="#CE1124"/></svg>', color:'#CE1124'},
   FRA:{name:'Francia', flag:'🇫🇷', color:'#0055A4'},
   MAR:{name:'Marruecos', flag:'🇲🇦', color:'#C1272D'},
   ESP:{name:'España', flag:'🇪🇸', color:'#AA151B'},
@@ -684,7 +685,7 @@ document.addEventListener('click', async (e)=>{
   }
   const markBtn = e.target.closest('[data-mark]');
   if(markBtn && adminMode){
-    const key = markBtn.dataset.match;
+    const key = markBtn.dataset.mark;
     const side = markBtn.dataset.side;
     const m = state.matches[key];
     m.winner = side==='a' ? m.a : m.b;
