@@ -216,6 +216,27 @@ body{
 .flag-svg{width:1.2em;height:0.85em;display:inline-block;vertical-align:-0.12em;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,0.08);}
 .ticket-team{font-family:'Anton',sans-serif;font-size:16px;color:var(--ink);}
 .ticket-stripe{height:6px;width:100%;}
+.ticket.ticket-out{
+  filter:grayscale(0.9) brightness(0.82);
+  opacity:.68;
+  position:relative;
+}
+.ticket.ticket-out::after{
+  content:'ELIMINADO';
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%) rotate(-16deg);
+  font-family:'Anton',sans-serif;
+  font-size:14px;
+  letter-spacing:.14em;
+  color:var(--coral);
+  border:3px solid var(--coral);
+  border-radius:6px;
+  padding:4px 14px;
+  background:rgba(253,251,246,0.88);
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  pointer-events:none;
+}
 
 /* ---------- BRACKET ---------- */
 .bracket-round-label{
@@ -542,12 +563,22 @@ function renderSuiCol(){
   }
 }
 
+function isEliminated(teamId){
+  if(!teamId) return false;
+  for(const key in state.matches){
+    const m = state.matches[key];
+    if(m.winner && (m.a===teamId || m.b===teamId) && m.winner!==teamId) return true;
+  }
+  return false;
+}
+
 function renderTickets(){
   const grid = document.getElementById('ticketsGrid');
   if(!state.drawDone){ grid.innerHTML=''; return; }
   grid.innerHTML = Object.keys(state.assignment).map((person,i)=>{
     const teamId = state.assignment[person];
-    return `<div class="ticket" style="animation-delay:${i*0.06}s">
+    const out = isEliminated(teamId);
+    return `<div class="ticket ${out?'ticket-out':''}" style="animation-delay:${i*0.06}s">
       <div class="ticket-top">
         <div><div class="ticket-person">${person}</div><div class="ticket-no">BOLETO N.º ${String(i+1).padStart(2,'0')}</div></div>
         <div style="font-size:20px;">🎟️</div>
